@@ -7,12 +7,23 @@
     <button>Add</button>
   </form>
 
+    <div>
+      <button @click="markAllDone()">Mark All Done</button>
+      <button @click="removeAll()">Remove All Done</button>
+    </div>
+
   <ul>
-    <li v-for="todo in todos" :key="todo.id">
-      <h3>{{ todo.content }}</h3>
+    <li v-for="(todo, index) in todos" 
+    :key="todo.id"
+    >
+      <h3 
+      class="todo"
+      :class="{ done: todo.done }"
+      @click="toggleDone(todo)"
+      >{{ todo.content }}</h3>
       <div>
-        <button>text</button>
-        <button>text</button>
+        <!-- <button @click="toggleDone(todo)">DONE</button> -->
+        <button @click="removeTodo(index)">Remove</button>
       </div>
     </li>
   </ul>
@@ -32,12 +43,33 @@ export default {
         done: false,
         content: newTodo.value,
       })
+      newTodo.value = ''
+    }
+
+    function toggleDone(todo) {
+      todo.done = !todo.done
+    }
+
+    function removeTodo(index) {
+      todos.value.splice(index, 1)
+    }
+
+    function markAllDone() {
+      todos.value.forEach((todo) => todo.done = !todo.done)
+    }
+
+    function removeAll() {
+      todos.value.length = 0
     }
 
     return {
       todos,
       newTodo,
+      toggleDone,
       addNewTodo,
+      removeTodo,
+      markAllDone,
+      removeAll,
     }
   }
 }
@@ -45,7 +77,7 @@ export default {
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap");
-$colomn-color: #ffa3a330;
+$colomn-color: #0706446b;
 $first-width: 500px;
 $second-width: 350px;
 
@@ -83,12 +115,20 @@ ul{
     justify-content: space-between;
     align-items: center;
     width: $first-width;
+
+    .todo{
+      cursor: pointer;
+    }
     
     button{
       display: flex;
       margin: 13px;
     }
   }
+}
+
+.done{
+  text-decoration: line-through;
 }
 
 @media (max-width: 604px) {
